@@ -15,20 +15,27 @@ const Tasks = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetch = useCallback(async () => {
+  const [error, setError] = useState(null);
+
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await getTasks();
-      setTasks(res.data.data);
+      setTasks(res.data?.data || []);
     } catch (err) {
       console.error("Tasks fetch error:", err);
+      setError(err.displayMessage || "Failed to load tasks.");
       toast.error("Failed to load tasks.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    fetch();
-  }, [fetch, isAdmin]); // Re-fetch when admin status is confirmed
+    if (!userProfile) return; // Wait for profile to be ready
+    fetchTasks();
+  }, [userProfile?.uid, fetchTasks]);
 
   const handleStatusChange = async (task, status) => {
     try {
@@ -60,6 +67,13 @@ const Tasks = () => {
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <p className="text-red-500 font-semibold">{error}</p>
+      <button onClick={fetchTasks} className="btn-primary text-xs px-4 py-2">Retry</button>
     </div>
   );
 

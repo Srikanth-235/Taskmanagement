@@ -60,8 +60,9 @@ const getTasks = async (userId, role, projectId = null) => {
   if (role === "admin") {
     let query = db.collection("tasks");
     if (projectId) query = query.where("projectId", "==", projectId);
-    const snap = await query.orderBy("createdAt", "desc").get();
+    const snap = await query.get();
     tasks = snap.docs.map((d) => d.data());
+    tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   } else {
     // For members: see all tasks in projects they are part of
     let projectIds = [];
