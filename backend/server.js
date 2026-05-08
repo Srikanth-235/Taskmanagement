@@ -83,4 +83,25 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`\n TaskManager API running on http://localhost:${PORT}`);
   console.log(`   Health: http://localhost:${PORT}/api/health\n`);
+
+  // ── Keep-Alive Ping (prevents Railway free tier cold starts) ──────────────
+  if (process.env.NODE_ENV === "production") {
+    const https = require("https");
+    const http  = require("http");
+    const SELF_URL = process.env.RAILWAY_PUBLIC_DOMAIN
+      ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}/api/health`
+      : null;
+
+    if (SELF_URL) {
+      setInterval(() => {
+        const client = SELF_URL.startsWith("https") ? https : http;
+        client.get(SELF_URL, (res) => {
+          console.log(`[Keep-Alive] Pinged ${SELF_URL} → ${res.statusCode}`);
+        }).on("error", (err) => {
+          console.warn(`[Keep-Alive] Ping failed: ${err.message}`);
+        });
+      }, 10 * 60 * 1000); // every 10 minutes
+      console.log(`[Keep-Alive] Self-ping enabled → ${SELF_URL}`);
+    }
+  }
 });

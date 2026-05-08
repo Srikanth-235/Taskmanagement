@@ -3,13 +3,23 @@ const path = require("path");
 
 let serviceAccount;
 
-// Load service account from environment variable (Production/Render) 
+// Load service account from environment variable (Production)
 // or from local file (Development)
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    // Railway sometimes double-escapes newlines in the private key (\\n vs \n)
+    // We normalize the string before parsing to handle both cases
+    let raw = process.env.FIREBASE_SERVICE_ACCOUNT.trim();
+    // If the string isn't already valid JSON, try fixing escaped newlines
+    try {
+      serviceAccount = JSON.parse(raw);
+    } catch {
+      raw = raw.replace(/\\n/g, "\n");
+      serviceAccount = JSON.parse(raw);
+    }
+    console.log("[Firebase] Service account loaded from environment variable.");
   } catch (err) {
-    console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT env var:", err);
+    console.error("[Firebase] Failed to parse FIREBASE_SERVICE_ACCOUNT:", err.message);
     process.exit(1);
   }
 } else {
@@ -19,8 +29,9 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   );
   try {
     serviceAccount = require(serviceAccountPath);
+    console.log("[Firebase] Service account loaded from local file.");
   } catch (err) {
-    console.error("Firebase service account file not found and no environment variable set.");
+    console.error("[Firebase] Service account file not found and FIREBASE_SERVICE_ACCOUNT env var not set.");
   }
 }
 
