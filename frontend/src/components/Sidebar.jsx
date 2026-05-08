@@ -36,13 +36,13 @@ const Sidebar = () => {
 
       {/* Sidebar Container */}
       <AnimatePresence>
-        {(isOpen || window.innerWidth >= 1024) && (
+        {(isOpen || true) && (
           <motion.aside 
-            initial={{ x: -280 }}
+            initial={isOpen ? { x: -280 } : false}
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 left-0 z-40 w-64 m-4 lg:m-0 glass-card !rounded-3xl lg:!rounded-none border-black/5 lg:border-r border-t-0 border-b-0 border-l-0 overflow-hidden flex flex-col bg-white shadow-[10px_0_30px_rgba(0,0,0,0.02)]"
+            className={`fixed inset-y-0 left-0 z-40 w-64 m-4 lg:m-0 glass-card !rounded-3xl lg:!rounded-none border-black/5 lg:border-r border-t-0 border-b-0 border-l-0 overflow-hidden flex-col bg-white shadow-[10px_0_30px_rgba(0,0,0,0.02)] ${isOpen ? 'flex' : 'hidden lg:flex'}`}
           >
             {/* Logo */}
             <div className="p-8 flex items-center gap-3">

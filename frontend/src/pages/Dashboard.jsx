@@ -41,10 +41,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (!userProfile) return;  // Don't fetch until profile is ready
     const active = { current: true };
     fetchData(active);
     return () => { active.current = false; };
-  }, [isAdmin]);
+  }, [userProfile?.uid]);
 
   const stats = [
     { label: "Active Projects", value: data.totalProjects, icon: LayoutDashboard, color: "blue", to: "/projects" },
