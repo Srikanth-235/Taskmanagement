@@ -49,6 +49,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Health Check ────────────────────────────────────────────────────────────
+app.get("/", (req, res) => {
+  res.status(200).send("TaskManager API is Online.");
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "TaskManager API is running.", timestamp: new Date().toISOString() });
 });
