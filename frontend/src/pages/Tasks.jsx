@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getTasks, updateStatus } from "../services/api";
+import { getCached, setCached } from "../services/cache";
 import TaskCard from "../components/TaskCard";
 import { CheckSquare, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,12 +18,14 @@ const Tasks = () => {
 
   const [error, setError] = useState(null);
 
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = useCallback(async (showSpinner = false) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       setError(null);
       const res = await getTasks();
-      setTasks(res.data?.data || []);
+      const data = res.data?.data || [];
+      setTasks(data);
+      setCached('tasks', data);
     } catch (err) {
       console.error("Tasks fetch error:", err);
       setError(err.displayMessage || "Failed to load tasks.");
@@ -33,8 +36,16 @@ const Tasks = () => {
   }, []);
 
   useEffect(() => {
-    if (!userProfile) return; // Wait for profile to be ready
-    fetchTasks();
+    if (!userProfile) return;
+    // Show cache immediately, then refresh in background
+    const cached = getCached('tasks');
+    if (cached) {
+      setTasks(cached);
+      setLoading(false);
+      fetchTasks(false); // silent background refresh
+    } else {
+      fetchTasks(true); // first visit — show spinner
+    }
   }, [userProfile?.uid, fetchTasks]);
 
   const handleStatusChange = async (task, status) => {

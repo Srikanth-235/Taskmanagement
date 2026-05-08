@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getProjects, createProject, deleteProject, getTasks } from "../services/api";
+import { getCached, setCached } from "../services/cache";
 import ProjectCard from "../components/ProjectCard";
 import { Plus, FolderKanban, AlertCircle, X, Loader2, Trash2, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
 const Projects = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, userProfile } = useAuth();
   const [projects, setProjects]   = useState([]);
   const [taskMap, setTaskMap]     = useState({});
   const [loading, setLoading]     = useState(true);
@@ -17,20 +18,20 @@ const Projects = () => {
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (showSpinner = false) => {
+    if (showSpinner) setLoading(true);
     try {
       const [pRes, tRes] = await Promise.all([getProjects(), getTasks()]);
-      const projects = pRes.data.data;
-      setProjects(projects);
-
+      const projectList = pRes.data.data;
       const map = {};
       (tRes.data.data || []).forEach(task => {
         if (!map[task.projectId]) map[task.projectId] = { total: 0, completed: 0 };
         map[task.projectId].total++;
         if (task.status === "Completed") map[task.projectId].completed++;
       });
+      setProjects(projectList);
       setTaskMap(map);
+      setCached('projects', { projectList, map });
     } catch (err) {
       toast.error("Failed to load projects.");
     } finally {
@@ -38,7 +39,18 @@ const Projects = () => {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    if (!userProfile) return;
+    const cached = getCached('projects');
+    if (cached) {
+      setProjects(cached.projectList);
+      setTaskMap(cached.map);
+      setLoading(false);
+      fetchData(false); // silent background refresh
+    } else {
+      fetchData(true);
+    }
+  }, [userProfile?.uid]);
 
   const validateForm = () => {
     const e = {};

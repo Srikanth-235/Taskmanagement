@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDashboardStats } from "../services/api";
+import { getCached, setCached } from "../services/cache";
 import { useAuth } from "../context/AuthContext";
 import StatCard from "../components/StatCard";
 import ProjectCard from "../components/ProjectCard";
@@ -25,24 +26,28 @@ const Dashboard = () => {
 
   const fetchData = async (active) => {
     try {
-      setLoading(true);
       const res = await getDashboardStats();
-      
       if (!active.current) return;
-
       if (res.data.success) {
         setData(res.data.data);
+        setCached('dashboard', res.data.data);
+        setLoading(false);
       }
     } catch (err) {
       console.error("Dashboard fetch error:", err);
-    } finally {
       if (active.current) setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!userProfile) return;  // Don't fetch until profile is ready
+    if (!userProfile) return;
     const active = { current: true };
+    // Show cache immediately, then refresh in background
+    const cached = getCached('dashboard');
+    if (cached) {
+      setData(cached);
+      setLoading(false);
+    }
     fetchData(active);
     return () => { active.current = false; };
   }, [userProfile?.uid]);
