@@ -1,62 +1,65 @@
-# TeamTaskManager
+# TaskManager — Modern Team Productivity Platform
 
-A collaborative task management platform designed for high-performance teams. This project features a robust role-based access control (RBAC) system, real-time analytics, and a modern, high-contrast UI for efficient project tracking.
+A high-performance, full-stack task management application built for speed and reliability.
 
-## Key Features
+## 🚀 Key Features
+- **Role-Based Access**: Specialized views for Admins (Global overview) and Members (Assigned tasks).
+- **Near-Instant Rendering**: Implements "Stale-While-Revalidate" caching for lightning-fast page transitions.
+- **Smart Dashboard**: Real-time aggregated statistics for projects, tasks, and team workloads.
+- **Project Workflows**: Create projects, assign members, and manage tasks through a beautiful Kanban-style interface.
+- **Mobile First**: Fully responsive design with a dynamic sidebar and touch-optimized components.
 
--   **Role-Based Access Control**: Admins can manage projects, members, and all tasks, while team members focus on their assigned work.
--   **Interactive Analytics**: Data-driven dashboard using Recharts to visualize task distribution, priority matrices, and project completion trends.
--   **Project Lifecycle Management**: Support for project status tracking (Pending vs. Completed) with Admin-only overrides.
--   **Real-Time Task Controls**: Interactive status bars for quick updates and Admin reassignment capabilities.
--   **Secure Authentication**: Integrated with Firebase Auth and protected by FastAPI middleware on the backend.
--   **Clean UI/UX**: High-contrast light theme built with Vanilla CSS and Framer Motion for smooth, professional transitions.
+## 🛠 Tech Stack
+- **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion, Lucide Icons.
+- **Backend**: Node.js, Express, Firebase Admin SDK.
+- **Database**: Google Firestore.
+- **Authentication**: Firebase Authentication.
+- **Deployment**: Dockerized services on Railway.
 
-## Tech Stack
+## 📦 Deployment Configuration
 
--   **Frontend**: React (Vite), Framer Motion, Recharts, Lucide React, TailwindCSS.
--   **Backend**: FastAPI (Python), Node.js (Express), Firebase Admin SDK.
--   **Database**: Google Firestore (NoSQL).
--   **Authentication**: Firebase Authentication.
+### Frontend Environment Variables (Railway)
+| Variable | Description |
+|---|---|
+| `VITE_FIREBASE_API_KEY` | Firebase Client API Key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain |
+| `VITE_FIREBASE_PROJECT_ID` | Firebase Project ID |
+| `VITE_API_URL` | URL of the Backend API (e.g., `https://backend.up.railway.app/api`) |
 
-## Getting Started
+### Backend Environment Variables (Railway)
+| Variable | Description |
+|---|---|
+| `FIREBASE_SERVICE_ACCOUNT` | **Critical**: Minified (one-line) JSON string of your Firebase Service Account key. |
+| `FRONTEND_URL` | URL of your deployed frontend. |
+| `RAILWAY_PUBLIC_DOMAIN` | Your backend domain (for the keep-alive self-ping feature). |
+| `NODE_ENV` | Set to `production`. |
 
-### Prerequisites
+## 🏗 Setup & Installation
 
--   Node.js (v18+)
--   Python 3.9+
--   Firebase Account & Project
+### Local Development
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Srikanth-235/Taskmanagement.git
+   ```
 
-### Installation
+2. **Backend Setup**:
+   ```bash
+   cd backend
+   npm install
+   # Add your TaskManagerFirebase.json to the config folder
+   npm start
+   ```
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/Srikanth-15L/TaskManager.git
-<<<<<<< HEAD
-    cd TeamTaskManager
-=======
-    cd TaskManager
->>>>>>> 32db8cc (Final cleanup and deployment configuration)
-    ```
+3. **Frontend Setup**:
+   ```bash
+   cd frontend
+   npm install
+   # Create a .env file with your VITE_FIREBASE variables
+   npm run dev
+   ```
 
-2.  **Setup Backend**:
-    ```bash
-    cd backend
-    npm install
-    # Add your Firebase service account key as 'config/TaskManagerFirebase.json'
-    # Create a .env file with VITE_API_URL and other necessary variables
-    npm start
-    ```
+## 🔒 Security
+The application uses **Firebase ID Token verification** on every API request. Each request is authenticated in the backend, ensuring users can only access data they are authorized to see based on their Firestore role.
 
-3.  **Setup Frontend**:
-    ```bash
-    cd frontend
-    npm install
-    # Create a .env file with VITE_API_URL
-    npm run dev
-    ```
-
-## Development Decisions
-
--   **State Management**: Used React Context API for lightweight and efficient global state handling (Auth, User Profile).
--   **UI Architecture**: Implemented a custom CSS variable system for a cohesive and easily maintainable design language.
--   **Performance**: Utilized asynchronous promise-based data fetching to ensure a snappy and responsive user experience.
+---
+Built with ❤️ by Antigravity
