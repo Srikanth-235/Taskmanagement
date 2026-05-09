@@ -61,5 +61,4 @@ A high-performance, full-stack task management application built for speed and r
 ## 🔒 Security
 The application uses **Firebase ID Token verification** on every API request. Each request is authenticated in the backend, ensuring users can only access data they are authorized to see based on their Firestore role.
 
----
-Built with ❤️ by Antigravity
+
