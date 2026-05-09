@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Mail, Lock, Zap, Globe, ArrowRight } from "lucide-react";
+import { Mail, Lock, Zap, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 const Login = () => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [gLoading, setGLoading] = useState(false);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,23 +44,6 @@ const Login = () => {
     }
   };
 
-  const handleGoogle = async () => {
-    setGLoading(true);
-    try {
-      const result = await loginWithGoogle();
-      if (result.isNew) {
-        toast.success("Registration successful! Please sign in.");
-        navigate("/login");
-      } else {
-        toast.success("Signed in with Google");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      toast.error("Google authentication failed");
-    } finally {
-      setGLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4" style={{ background: "var(--bg-primary)" }}>
@@ -145,19 +128,6 @@ const Login = () => {
             </motion.button>
           </form>
 
-          <div className="divider my-8"><span>or continue with</span></div>
-
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleGoogle} className="btn-secondary w-full justify-center h-12 text-sm font-bold border-black/5 bg-white hover:bg-slate-50 shadow-sm"
-            disabled={gLoading}>
-            {gLoading ? <span className="spinner w-5 h-5" /> : (
-              <>
-                <Globe size={18} className="text-emerald-500" /> Google Account
-              </>
-            )}
-          </motion.button>
 
           <p className="text-center mt-8 text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
             New to TaskFlow?{" "}

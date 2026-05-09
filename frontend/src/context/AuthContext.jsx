@@ -2,8 +2,6 @@ import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -66,7 +64,6 @@ export const AuthProvider = ({ children }) => {
       "auth/email-already-in-use":    "An account with this email already exists.",
       "auth/weak-password":           "Password must be at least 6 characters.",
       "auth/too-many-requests":       "Too many attempts. Please try again later.",
-      "auth/popup-closed-by-user":    "Google sign-in was cancelled.",
       "auth/network-request-failed":  "Network error. Check your connection.",
       "auth/invalid-credential":      "Invalid credentials. Please check your email and password.",
     };
@@ -104,33 +101,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async () => {
-    setAuthError(null);
-    try {
-      const provider = new GoogleAuthProvider();
-      const cred = await signInWithPopup(auth, provider);
-      const user = cred.user;
-
-      try {
-        const profile = await loadProfile();
-        if (!profile) throw new Error("Profile missing");
-        return { isNew: false };
-      } catch (err) {
-        await registerUser({
-          userId: user.uid,
-          name: user.displayName || "Google User",
-          email: user.email,
-          role: "member"
-        });
-        await signOut(auth);
-        return { isNew: true };
-      }
-    } catch (err) {
-      const msg = err.response?.data?.message || friendlyError(err.code) || "Google login failed.";
-      setAuthError(msg);
-      throw err;
-    }
-  };
 
   const logout = async () => {
     await signOut(auth);
@@ -146,7 +116,6 @@ export const AuthProvider = ({ children }) => {
     setAuthError,
     login,
     register,
-    loginWithGoogle,
     logout,
     isAdmin: userProfile?.role === "admin",
   }), [currentUser, userProfile, loading, authError]);

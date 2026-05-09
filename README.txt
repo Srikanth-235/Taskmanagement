@@ -1,55 +1,56 @@
-TEAM TASK MANAGER
-=================
+TASKMANAGER - MODERN TEAM PRODUCTIVITY PLATFORM
 
-OVERVIEW
---------
-A collaborative task management platform designed for high-performance teams. This project features a robust role-based access control (RBAC) system, real-time analytics, and a modern, high-contrast UI for efficient project tracking.
+A high-performance, full-stack task management application built for speed and reliability.
 
-KEY FEATURES
+1. KEY FEATURES
+----------------
+* Role-Based Access: Specialized views for Admins and Members.
+* Near-Instant Rendering: Caching system for lightning-fast page transitions.
+* Smart Dashboard: Real-time aggregated statistics for projects and tasks.
+* Project Workflows: Beautiful Kanban-style interface for project and task management.
+* Mobile First: Fully responsive design with a dynamic sidebar.
+
+2. TECH STACK
+--------------
+* Frontend: React 18, Vite, Tailwind CSS, Framer Motion, Lucide Icons.
+* Backend: Node.js, Express, Firebase Admin SDK.
+* Database: Google Firestore.
+* Authentication: Firebase Authentication.
+* Deployment: Dockerized services on Railway.
+
+3. DEPLOYMENT CONFIGURATION (RAILWAY)
+--------------------------------------
+
+FRONTEND VARIABLES:
+- VITE_FIREBASE_API_KEY: Your Firebase API Key
+- VITE_FIREBASE_AUTH_DOMAIN: Your Firebase Auth Domain
+- VITE_FIREBASE_PROJECT_ID: Your Firebase Project ID
+- VITE_API_URL: Your Backend API URL (e.g., https://backend.up.railway.app/api)
+
+BACKEND VARIABLES:
+- FIREBASE_SERVICE_ACCOUNT: Minified (one-line) JSON string of your Firebase Service Account key.
+- FRONTEND_URL: URL of your deployed frontend.
+- RAILWAY_PUBLIC_DOMAIN: Your backend domain (e.g., backend.up.railway.app)
+- NODE_ENV: production
+
+4. SETUP & INSTALLATION
+------------------------
+
+LOCAL DEVELOPMENT:
+1. Clone the repository: git clone https://github.com/Srikanth-235/Taskmanagement.git
+2. Backend:
+   - cd backend
+   - npm install
+   - Add TaskManagerFirebase.json to config folder
+   - npm start
+3. Frontend:
+   - cd frontend
+   - npm install
+   - Create .env with VITE_FIREBASE variables
+   - npm run dev
+
+5. SECURITY
 ------------
-- Role-Based Access Control: Admins can manage projects, members, and all tasks, while team members focus on their assigned work.
-- Interactive Analytics: Data-driven dashboard using Recharts to visualize task distribution, priority matrices, and project completion trends.
-- Project Lifecycle Management: Support for project status tracking (Pending vs. Completed) with Admin-only overrides.
-- Real-Time Task Controls: Interactive status bars for quick updates and Admin reassignment capabilities.
-- Secure Authentication: Integrated with Firebase Auth and protected by FastAPI middleware on the backend.
-- Clean UI/UX: High-contrast light theme built with Vanilla CSS and Framer Motion for smooth, professional transitions.
+The application uses Firebase ID Token verification on every API request. Each request is authenticated in the backend, ensuring users can only access data they are authorized to see based on their Firestore role.
 
-TECH STACK
-----------
-- Frontend: React (Vite), Framer Motion, Recharts, Lucide React, TailwindCSS.
-- Backend: FastAPI (Python), Node.js (Express), Firebase Admin SDK.
-- Database: Google Firestore (NoSQL).
-- Authentication: Firebase Authentication.
 
-GETTING STARTED
----------------
-
-Prerequisites:
-- Node.js (v18+)
-- Python 3.9+
-- Firebase Account & Project
-
-Installation:
-
-1. Clone the repository:
-   git clone https://github.com/Srikanth-15L/TaskManager.git
-   cd TaskManager
-
-2. Setup Backend:
-   cd backend
-   npm install
-   # Add your Firebase service account key as 'config/TaskManagerFirebase.json'
-   # Create a .env file with VITE_API_URL and other necessary variables
-   npm start
-
-3. Setup Frontend:
-   cd frontend
-   npm install
-   # Create a .env file with VITE_API_URL
-   npm run dev
-
-DEVELOPMENT DECISIONS
----------------------
-- State Management: Used React Context API for lightweight and efficient global state handling (Auth, User Profile).
-- UI Architecture: Implemented a custom CSS variable system for a cohesive and easily maintainable design language.
-- Performance: Utilized asynchronous promise-based data fetching to ensure a snappy and responsive user experience.

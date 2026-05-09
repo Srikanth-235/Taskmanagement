@@ -1,5 +1,5 @@
 FROM node:20-alpine
-
+#alpine linux is used to smaller size - faster downloads and 
 WORKDIR /app
 
 COPY package*.json ./
